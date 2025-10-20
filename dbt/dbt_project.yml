@@ -1,0 +1,6 @@
+name: 'LakehouseStarterKit'
+version: '1.0.0'
+profile: 'LakehouseStarterKit_profile'
+config-version: 2
+
+model-paths: ["models"]

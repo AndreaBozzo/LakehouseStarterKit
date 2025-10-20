@@ -1,0 +1,11 @@
+# Data ingestion with dlt
+dlt[duckdb]>=0.4.0
+
+# Data transformation with dbt
+dbt-duckdb>=1.7.0
+
+# API requests
+requests>=2.31.0
+
+# Additional utilities
+python-dotenv>=1.0.0

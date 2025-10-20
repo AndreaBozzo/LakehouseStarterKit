@@ -1,0 +1,6 @@
+'LakehouseStarterKit_profile':
+  target: 'dev'
+  outputs:
+    dev:
+      type: 'duckdb'
+      path: ../openlakehouse_demo.duckdb

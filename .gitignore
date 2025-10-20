@@ -1,0 +1,47 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# DLT
+.dlt/
+dlt_data/
+
+# DBT
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# DuckDB
+openlakehouse_demo.duckdb
+openlakehouse_demo.duckdb.wal
+*.duckdb.wal
+
+# Docker volumes
+duckdb/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude files
+CLAUDE.md

@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw data layer loaded by DLT pipelines"
+    schema: raw
+    tables:
+      - name: github_repos
+        description: "Popular GitHub repositories data"
+        columns:
+          - name: name
+            description: "Repository name"
+          - name: full_name
+            description: "Full repository name (owner/repo)"
+          - name: description
+            description: "Repository description"
+          - name: stars
+            description: "Number of stars"
+          - name: forks
+            description: "Number of forks"
+          - name: language
+            description: "Primary programming language"
+          - name: url
+            description: "Repository URL"
+          - name: created_at
+            description: "Repository creation date"
+          - name: updated_at
+            description: "Last update date"

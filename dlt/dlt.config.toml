@@ -1,0 +1,6 @@
+[pipeline]
+destination = "duckdb"
+dataset_name = "raw"
+
+[duckdb]
+file_path = "openlakehouse_demo.duckdb"

@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASS}
+    command: server --address ":9000" --console-address ":9001" /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    environment:
+      SUPERSET_SECRET_KEY: 'supersetsecretkey'
+      SUPERSET_LOAD_EXAMPLES: 'no'
+    ports:
+      - "8088:8088"
+    depends_on:
+      minio:
+        condition: service_healthy
+    volumes:
+      - superset_data:/app/superset_home
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py
+    command: >
+      sh -c "superset db upgrade &&
+             superset fab create-admin --username ${SUPERSET_USER} --firstname Admin --lastname User --email admin@example.com --password ${SUPERSET_PASS} || true &&
+             superset init &&
+             superset run -h 0.0.0.0 -p 8088 --with-threads --reload"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  minio_data:
+  superset_data:
