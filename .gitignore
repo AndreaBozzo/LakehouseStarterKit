@@ -24,9 +24,6 @@ openlakehouse_demo.duckdb
 openlakehouse_demo.duckdb.wal
 *.duckdb.wal
 
-# Docker volumes
-duckdb/
-
 # Environment
 .env
 
