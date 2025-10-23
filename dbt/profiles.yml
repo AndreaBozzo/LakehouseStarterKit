@@ -1,6 +1,15 @@
-'LakehouseStarterKit_profile':
-  target: 'dev'
+LakehouseStarterKit_profile:
+  target: dev
   outputs:
     dev:
-      type: 'duckdb'
-      path: ../openlakehouse_demo.duckdb
+      type: duckdb
+      path: '../lakehouse.duckdb'
+      extensions:
+        - httpfs
+      settings:
+        s3_region: us-east-1
+        s3_endpoint: 'localhost:9000'
+        s3_use_ssl: false
+        s3_url_style: path
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID', 'admin') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY', 'password123') }}"

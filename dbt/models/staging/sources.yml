@@ -1,28 +1,85 @@
 version: 2
 
 sources:
-  - name: raw
-    description: "Raw data layer loaded by DLT pipelines"
-    schema: raw
+  - name: ecommerce_raw
+    description: "Raw e-commerce data loaded by dlt from PostgreSQL to MinIO"
+    meta:
+      external_location: "s3://raw/ecommerce/ecommerce/"
     tables:
-      - name: github_repos
-        description: "Popular GitHub repositories data"
+      - name: customers
+        description: "Customer information from e-commerce database"
+        meta:
+          external_location: "s3://raw/ecommerce/ecommerce/customers/*.parquet"
         columns:
-          - name: name
-            description: "Repository name"
-          - name: full_name
-            description: "Full repository name (owner/repo)"
-          - name: description
-            description: "Repository description"
-          - name: stars
-            description: "Number of stars"
-          - name: forks
-            description: "Number of forks"
-          - name: language
-            description: "Primary programming language"
-          - name: url
-            description: "Repository URL"
+          - name: customer_id
+            description: "Unique customer identifier"
+          - name: first_name
+            description: "Customer first name"
+          - name: last_name
+            description: "Customer last name"
+          - name: email
+            description: "Customer email address"
+          - name: country
+            description: "Customer country"
+          - name: city
+            description: "Customer city"
           - name: created_at
-            description: "Repository creation date"
-          - name: updated_at
-            description: "Last update date"
+            description: "Account creation timestamp"
+
+      - name: products
+        description: "Product catalog from e-commerce database"
+        meta:
+          external_location: "s3://raw/ecommerce/ecommerce/products/*.parquet"
+        columns:
+          - name: product_id
+            description: "Unique product identifier"
+          - name: product_name
+            description: "Product name"
+          - name: category
+            description: "Product category"
+          - name: price
+            description: "Product price in USD"
+          - name: stock_quantity
+            description: "Available stock quantity"
+          - name: created_at
+            description: "Product creation timestamp"
+
+      - name: orders
+        description: "Order transactions from e-commerce database"
+        meta:
+          external_location: "s3://raw/ecommerce/ecommerce/orders/*.parquet"
+        columns:
+          - name: order_id
+            description: "Unique order identifier"
+          - name: customer_id
+            description: "Foreign key to customers"
+          - name: order_date
+            description: "Order placement timestamp"
+          - name: status
+            description: "Order status (pending, processing, shipped, delivered, cancelled)"
+          - name: total_amount
+            description: "Total order amount before discount"
+          - name: discount_amount
+            description: "Applied discount amount"
+          - name: shipping_cost
+            description: "Shipping cost"
+          - name: tax_amount
+            description: "Tax amount"
+
+      - name: order_items
+        description: "Individual line items for each order"
+        meta:
+          external_location: "s3://raw/ecommerce/ecommerce/order_items/*.parquet"
+        columns:
+          - name: order_item_id
+            description: "Unique order item identifier"
+          - name: order_id
+            description: "Foreign key to orders"
+          - name: product_id
+            description: "Foreign key to products"
+          - name: quantity
+            description: "Quantity ordered"
+          - name: unit_price
+            description: "Price per unit at time of order"
+          - name: subtotal
+            description: "Quantity * unit_price"

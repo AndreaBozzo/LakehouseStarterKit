@@ -1,24 +1,112 @@
 version: 2
 
 models:
-  - name: example_model
-    description: "Staging model that filters GitHub repos to Python only"
+  - name: stg_ecommerce__customers
+    description: "Staging model for e-commerce customer data"
     columns:
-      - name: name
-        description: "Repository name"
+      - name: customer_id
+        description: "Unique customer identifier"
+        tests:
+          - unique
+          - not_null
+      - name: email
+        description: "Customer email address"
+        tests:
+          - not_null
       - name: full_name
-        description: "Full repository name (owner/repo)"
-      - name: description
-        description: "Repository description"
-      - name: stars
-        description: "Number of stars"
-      - name: forks
-        description: "Number of forks"
-      - name: language
-        description: "Primary programming language (Python)"
-      - name: url
-        description: "Repository URL"
-      - name: created_at
-        description: "Repository creation date"
-      - name: updated_at
-        description: "Last update date"
+        description: "Customer full name"
+      - name: country
+        description: "Customer country"
+        tests:
+          - not_null
+
+  - name: stg_ecommerce__products
+    description: "Staging model for product catalog"
+    columns:
+      - name: product_id
+        description: "Unique product identifier"
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Product name"
+        tests:
+          - not_null
+      - name: category
+        description: "Product category"
+        tests:
+          - not_null
+      - name: price
+        description: "Product price in USD"
+        tests:
+          - not_null
+      - name: stock_status
+        description: "Stock availability status"
+        tests:
+          - accepted_values:
+              values: ['Out of Stock', 'Low Stock', 'In Stock']
+
+  - name: stg_ecommerce__orders
+    description: "Staging model for order transactions"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to customers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_ecommerce__customers')
+              field: customer_id
+      - name: order_date
+        description: "Order placement timestamp"
+        tests:
+          - not_null
+      - name: status
+        description: "Order status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+      - name: final_amount
+        description: "Final order amount including all charges"
+        tests:
+          - not_null
+
+  - name: stg_ecommerce__order_items
+    description: "Staging model for order line items"
+    columns:
+      - name: order_item_id
+        description: "Unique order item identifier"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Foreign key to orders"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_ecommerce__orders')
+              field: order_id
+      - name: product_id
+        description: "Foreign key to products"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_ecommerce__products')
+              field: product_id
+      - name: quantity
+        description: "Quantity ordered"
+        tests:
+          - not_null
+      - name: unit_price
+        description: "Price per unit"
+        tests:
+          - not_null
+      - name: subtotal
+        description: "Line item subtotal"
+        tests:
+          - not_null

@@ -22,6 +22,7 @@ dbt/logs/
 # DuckDB
 openlakehouse_demo.duckdb
 openlakehouse_demo.duckdb.wal
+lakehouse.duckdb
 *.duckdb.wal
 
 # Environment

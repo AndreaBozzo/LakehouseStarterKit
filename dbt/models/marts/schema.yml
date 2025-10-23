@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension with order metrics and segmentation"
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier"
+        tests:
+          - unique
+          - not_null
+      - name: email_normalized
+        description: "Normalized email address"
+        tests:
+          - unique
+          - not_null
+      - name: total_orders
+        description: "Total number of orders placed"
+        tests:
+          - not_null
+      - name: lifetime_value
+        description: "Total customer lifetime value"
+        tests:
+          - not_null
+      - name: customer_segment
+        description: "Customer segmentation based on order count"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Never Ordered', 'One-time Buyer', 'Repeat Buyer', 'Loyal Customer']
+
+  - name: fct_orders
+    description: "Order fact table with enriched metrics"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to dim_customers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: order_date
+        description: "Order placement timestamp"
+        tests:
+          - not_null
+      - name: final_amount
+        description: "Final order amount"
+        tests:
+          - not_null
+      - name: total_items
+        description: "Total number of distinct items"
+        tests:
+          - not_null
+
+  - name: mart_sales_summary
+    description: "Sales summary across multiple dimensions (product, category, country)"
+    columns:
+      - name: summary_type
+        description: "Type of summary (product, category, or country)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['product', 'category', 'country']
+      - name: dimension_value
+        description: "Value of the dimension being summarized"
+        tests:
+          - not_null
