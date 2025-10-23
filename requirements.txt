@@ -1,11 +1,46 @@
-# Data ingestion with dlt
-dlt[duckdb]>=0.4.0
+# ============================================
+# Data Ingestion - dlt
+# ============================================
+# dlt with DuckDB and filesystem (S3/MinIO) support
+dlt[duckdb,filesystem]>=0.4.0
 
-# Data transformation with dbt
+# Retry logic for robust API calls
+tenacity>=8.0.0
+
+# ============================================
+# Data Transformation - dbt
+# ============================================
 dbt-duckdb>=1.7.0
 
-# API requests
+# ============================================
+# Database Connectors
+# ============================================
+# PostgreSQL connector for source database
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+
+# ============================================
+# API & HTTP
+# ============================================
 requests>=2.31.0
 
-# Additional utilities
+# ============================================
+# Object Storage
+# ============================================
+# MinIO Python SDK (optional, for admin tasks)
+minio>=7.2.0
+
+# S3 filesystem support
+s3fs>=2023.0.0
+
+# ============================================
+# Utilities
+# ============================================
 python-dotenv>=1.0.0
+
+# ============================================
+# Development & Testing (optional)
+# ============================================
+# pytest>=7.0.0
+# black>=23.0.0
+# ruff>=0.1.0
