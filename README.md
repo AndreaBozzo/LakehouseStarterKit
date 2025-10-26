@@ -15,9 +15,12 @@ Open source lakehouse environment for small teams & startups, modelled to be:
 
 ```
 PostgreSQL → dlt → MinIO (S3 Parquet) → dbt (DuckDB) → Metabase
-
-Orchestration: Prefect (scheduling & monitoring)
+                                ↓
+                          Prefect Server
+                     (scheduling & monitoring)
 ```
+
+**Flow**: Extract (dlt) → Transform (dbt) → Test (dbt) → Visualize (Metabase)
 
 ## Stack
 
@@ -110,6 +113,8 @@ This creates 7 models:
 - **Staging** (4 views): `stg_ecommerce__customers`, `stg_ecommerce__products`, `stg_ecommerce__orders`, `stg_ecommerce__order_items`
 - **Marts** (3 tables): `dim_customers`, `fct_orders`, `mart_sales_summary`
 
+All models are stored in `lakehouse.duckdb` and accessible via Metabase.
+
 ### 3. Run dbt tests
 
 ```bash
@@ -118,7 +123,22 @@ dbt test
 
 Executes 45 data quality tests (unique, not_null, relationships, accepted_values).
 
-### 4. Access the tools
+### 4. Run the orchestrated pipeline (Optional)
+
+To test the full automated ETL pipeline with Prefect:
+
+```bash
+python flows/ecommerce_etl_flow.py
+```
+
+This runs all 3 steps automatically:
+1. dlt ingestion (PostgreSQL → MinIO)
+2. dbt transformations (MinIO → DuckDB)
+3. dbt tests (data quality validation)
+
+**Duration**: ~4 minutes
+
+### 5. Access the tools
 
 - **MinIO Console**: <http://localhost:9001> (admin / password123)
 - **Prefect UI**: <http://localhost:4200> (orchestration dashboard)
@@ -173,20 +193,59 @@ Executes 45 data quality tests (unique, not_null, relationships, accepted_values
 4. **dbt + DuckDB**: Reads Parquet from MinIO, transforms data, creates analytics models
 5. **Metabase**: Connects to DuckDB for visualization
 
+## Orchestration
+
+The project includes **Prefect** for workflow orchestration:
+
+- **Prefect UI**: <http://localhost:4200>
+- **Flow**: `flows/ecommerce_etl_flow.py`
+- **Features**:
+  - Automated ETL pipeline execution
+  - Task retry logic and error handling
+  - Comprehensive logging
+  - Scheduling support (daily at 2 AM)
+  - Monitoring and observability
+
+**To schedule automatic runs**:
+
+```bash
+# Option 1: Local development
+python flows/deploy.py
+
+# Option 2: Production with workers
+prefect deploy
+```
+
+See [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md) for complete guide.
+
+## Visualization
+
+**Metabase** is available for creating dashboards and exploring data:
+
+- **URL**: <http://localhost:3000>
+- **Database**: Connect to `/duckdb/lakehouse.duckdb` (inside container)
+- **Setup Guide**: [docs/METABASE_SETUP.md](docs/METABASE_SETUP.md)
+
+**First-time setup** (10 minutes):
+1. Create admin account
+2. Connect to DuckDB database
+3. Create dashboards for sales analytics
+
 ## Next Steps
 
 ### Immediate
 
-- Connect Metabase to DuckDB database at `lakehouse.duckdb`
-- Create dashboards in Metabase for sales analysis
-- Explore data quality with dbt test results
+- ✅ Core pipeline working end-to-end
+- ✅ Orchestration layer functional
+- ⚠️ Complete Metabase setup (manual, 10 min)
+- Create 3 dashboards in Metabase
 
 ### Short-term
 
-- Update GitHub API pipeline (`dlt/pipelines/example_api.py`) to write to MinIO
-- Add orchestration (Prefect or Airflow) for scheduled pipeline runs
-- Add more dbt tests and documentation
-- Create additional mart models based on business needs
+- Add screenshots and dashboard templates
+- Update GitHub API pipeline to MinIO
+- Add incremental dbt models
+- Configure production Prefect workers
 
 ### Long-term
 

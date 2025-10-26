@@ -351,23 +351,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.deploy:
-        # Deploy flow with schedule
-        from prefect.deployments import Deployment
-        from prefect.server.schemas.schedules import CronSchedule
-
-        deployment = Deployment.build_from_flow(
-            flow=ecommerce_etl_flow,
-            name="ecommerce-etl-daily",
-            schedule=CronSchedule(cron="0 2 * * *"),  # Daily at 2 AM
-            work_pool_name="default",
-            description="Daily ETL pipeline for e-commerce data",
-            tags=["etl", "ecommerce", "dlt", "dbt"]
-        )
-
-        deployment.apply()
-        print("✅ Flow deployed to Prefect Server")
+        # Serve flow with schedule using Prefect 3 API (local development)
+        print("✅ Registering flow deployment to Prefect Server")
         print("📅 Schedule: Daily at 02:00 AM")
         print("🔗 UI: http://localhost:4200")
+        print("\n⚠️  Note: For local development, the flow is registered.")
+        print("   To run scheduled flows, keep this process running or use Prefect workers.")
+        print("\n   For production deployment with workers, use:")
+        print("   prefect deploy --name ecommerce-etl-daily")
+
+        # Create deployment without requiring image/storage
+        ecommerce_etl_flow.serve(
+            name="ecommerce-etl-daily",
+            cron="0 2 * * *",  # Daily at 2 AM
+            tags=["etl", "ecommerce", "dlt", "dbt"],
+            description="Daily ETL pipeline for e-commerce data"
+        )
     else:
         # Run flow immediately
         result = ecommerce_etl_flow()
