@@ -3,7 +3,7 @@
 ![screen_01](assets/screenshots/screen_01.png)
 ![screen_02](assets/screenshots/minioclientviewpostpipelinedlt.png)
 
-**Version 0.0.2**
+**Version 0.0.3**
 
 Open source lakehouse environment for small teams & startups, modelled to be:
 
@@ -13,8 +13,10 @@ Open source lakehouse environment for small teams & startups, modelled to be:
 
 ## Architecture
 
-```text
-PostgreSQL (source) → dlt → MinIO (S3) → dbt (DuckDB) → Metabase
+```
+PostgreSQL → dlt → MinIO (S3 Parquet) → dbt (DuckDB) → Metabase
+
+Orchestration: Prefect (scheduling & monitoring)
 ```
 
 ## Stack
@@ -24,6 +26,7 @@ PostgreSQL (source) → dlt → MinIO (S3) → dbt (DuckDB) → Metabase
 - **dlt**: Data ingestion (PostgreSQL → MinIO in Parquet format)
 - **dbt**: Data transformation (MinIO → analytics models)
 - **DuckDB**: Query engine with S3 access via httpfs
+- **Prefect**: Workflow orchestration and scheduling
 - **Metabase**: Data visualization and BI
 
 ## Prerequisites
@@ -73,8 +76,9 @@ docker-compose up -d
 This will start:
 
 - **MinIO** on <http://localhost:9001> (console) and <http://localhost:9000> (API)
-- **PostgreSQL** on `localhost:15432` with e-commerce sample data
-- **Metabase** on <http://localhost:3000>
+- **PostgreSQL** on `localhost:5433` with e-commerce sample data
+- **Prefect** on <http://localhost:4200> for orchestration
+- **Metabase** on <http://localhost:3000> for visualization
 
 Wait 2-3 minutes for services to initialize.
 
@@ -117,8 +121,9 @@ Executes 45 data quality tests (unique, not_null, relationships, accepted_values
 ### 4. Access the tools
 
 - **MinIO Console**: <http://localhost:9001> (admin / password123)
+- **Prefect UI**: <http://localhost:4200> (orchestration dashboard)
 - **Metabase**: <http://localhost:3000> (setup required on first access)
-- **PostgreSQL**: `localhost:15432` (postgres / postgres)
+- **PostgreSQL**: `localhost:5433` (postgres / postgres)
 
 ## Project Structure
 
