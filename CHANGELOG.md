@@ -20,9 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Metabase Integration**: Business intelligence and visualization
   - Docker service: Metabase on port 3000
   - PostgreSQL metadata storage
-  - DuckDB driver support
-  - Volume mount for lakehouse.duckdb access
-  - Setup guide: `docs/METABASE_SETUP.md`
+  - **DuckDB driver support** (78MB community driver installed)
+    - Driver: MotherDuck Open Source metabase_duckdb_driver
+    - Auto-loaded from `/metabase-data/plugins/`
+    - Successfully registered: `:duckdb` driver
+  - Volume mount for lakehouse.duckdb access (read-only)
+  - Setup guide: `docs/METABASE_SETUP.md` (updated with driver installation)
 
 - **Documentation**:
   - `docs/ORCHESTRATION.md` - Complete Prefect setup guide (400+ lines)

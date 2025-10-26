@@ -272,6 +272,9 @@ Check `.env` file and modify ports if needed. PostgreSQL uses port 15432 to avoi
 ## Documentation
 
 - [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) - Detailed project status and implementation notes
+- [ORCHESTRATION.md](docs/ORCHESTRATION.md) - Complete Prefect orchestration guide (400+ lines)
+- [METABASE_SETUP.md](docs/METABASE_SETUP.md) - Complete Metabase setup guide with DuckDB driver (500+ lines)
+- [CHANGELOG.md](CHANGELOG.md) - Version history and release notes
 - [.env.example](.env.example) - Environment variables documentation
 - [SECURITY.md](SECURITY.md) - Security policy
 

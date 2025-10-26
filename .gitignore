@@ -41,5 +41,8 @@ lakehouse.duckdb
 .DS_Store
 Thumbs.db
 
+# Metabase
+metabase_data/
+
 # Claude files
 CLAUDE.md

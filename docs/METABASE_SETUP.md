@@ -99,57 +99,63 @@ This is where we connect to DuckDB:
 
 If DuckDB is not available, you have two options:
 
-**Option A: Use DuckDB Driver (Recommended)**
-- Metabase may not have native DuckDB support by default
-- Install DuckDB driver plugin:
-  ```bash
-  # Download DuckDB Metabase driver
-  # Place .jar file in metabase_data/plugins/ directory
-  # Restart Metabase container
-  ```
+**Option A: Use DuckDB Driver (Recommended)** ✅ **Implemented**
 
-**Option B: Use PostgreSQL Foreign Data Wrapper**
-- Connect DuckDB to PostgreSQL via FDW
-- Query DuckDB tables through PostgreSQL connection
-- More complex setup (not recommended for this starter kit)
+The DuckDB driver is pre-installed in this starter kit. If you need to install it manually:
 
-**For this guide, we'll use a workaround:**
-
-#### 3.3 Alternative: SQLite Connection (Workaround)
-
-Since DuckDB driver may not be available by default, we can:
-
-1. **Export DuckDB data to SQLite** (temporary solution):
+1. **Download the driver**:
    ```bash
-   # In project root
-   python -c "
-   import duckdb
-   import sqlite3
+   # Create plugins directory
+   mkdir -p metabase_data/plugins
 
-   # Read from DuckDB
-   duck = duckdb.connect('lakehouse.duckdb', read_only=True)
-
-   # Export to SQLite
-   sqlite = sqlite3.connect('lakehouse.sqlite')
-
-   # Export each table
-   for table in ['dim_customers', 'fct_orders', 'mart_sales_summary']:
-       df = duck.execute(f'SELECT * FROM {table}').df()
-       df.to_sql(table, sqlite, if_exists='replace', index=False)
-
-   duck.close()
-   sqlite.close()
-   print('✅ Exported to lakehouse.sqlite')
-   "
+   # Download DuckDB Metabase driver (78MB)
+   curl -L -o metabase_data/plugins/duckdb.metabase-driver.jar \
+     https://github.com/MotherDuck-Open-Source/metabase_duckdb_driver/releases/latest/download/duckdb.metabase-driver.jar
    ```
 
-2. **Connect Metabase to SQLite**:
-   - Database type: **SQLite**
-   - Name: `Lakehouse Analytics`
-   - File path: `/duckdb/lakehouse.sqlite` (Docker path)
-   - Click **Save**
+2. **Install in container**:
+   ```bash
+   # Copy driver to container
+   docker exec metabase mkdir -p /metabase-data/plugins
+   docker cp metabase_data/plugins/duckdb.metabase-driver.jar metabase:/metabase-data/plugins/
 
-**Note**: This is a temporary workaround. For production, use the DuckDB Metabase driver or PostgreSQL with DuckDB FDW.
+   # Fix permissions
+   docker exec metabase chown -R metabase:metabase /metabase-data/plugins
+   docker exec metabase chmod -R 755 /metabase-data/plugins
+
+   # Restart to load driver
+   docker restart metabase
+   ```
+
+3. **Verify installation**:
+   ```bash
+   # Check logs for "Registered driver :duckdb"
+   docker logs metabase 2>&1 | grep -i "duckdb"
+   ```
+
+**DuckDB Connection Details:**
+
+Once the driver is installed (pre-installed in this starter kit), configure the connection:
+
+1. **Database Type**: Select **DuckDB** from the dropdown
+2. **Display Name**: `Lakehouse Analytics`
+3. **Database File Path**: `/duckdb/lakehouse.duckdb`
+   - This path is mounted from the host `lakehouse.duckdb` file
+   - The file contains all dbt-transformed tables (marts, dimensions, facts)
+4. **Advanced Options** (leave defaults):
+   - Read Only: Recommended (checked)
+   - Additional JDBC options: (leave empty)
+5. Click **Save**
+
+**Troubleshooting:**
+- If DuckDB is not in the database type dropdown, verify driver installation:
+  ```bash
+  docker logs metabase 2>&1 | grep "Registered driver :duckdb"
+  ```
+- If you see "Operation not permitted" errors, check file permissions:
+  ```bash
+  docker exec metabase ls -lh /metabase-data/plugins/
+  ```
 
 ### Step 4: Verify Database Connection
 

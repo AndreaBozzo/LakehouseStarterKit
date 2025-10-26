@@ -116,6 +116,9 @@ services:
   # ============================================
   # Metabase - Data Visualization Platform
   # ============================================
+  # NOTE: DuckDB driver (78MB) installed in /metabase-data/plugins/
+  #       Driver file: duckdb.metabase-driver.jar
+  #       See docs/METABASE_SETUP.md for installation instructions
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
@@ -126,6 +129,7 @@ services:
       MB_DB_USER: ${POSTGRES_USER}
       MB_DB_PASS: ${POSTGRES_PASSWORD}
       MB_DB_HOST: postgres
+      MB_PLUGINS_DIR: /metabase-data/plugins
     ports:
       - "3000:3000"
     depends_on:
